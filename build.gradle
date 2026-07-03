@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'me.gabytm.minecraft'
-version projectVersion(2, 0, 0)
+version projectVersion(project, 2, 0, 0)
 
 repositories {
     mavenCentral()
@@ -111,11 +111,13 @@ tasks.register('copyJarToServer', Copy) {
 	}
 }
 
-private static String projectVersion(int major, int minor, int patch) {
-    def buildNumber = System.getenv('BUILD_NUMBER') ?: System.getProperty('BUILD_NUMBER')
+private static String projectVersion(Project project, int major, int minor, int patch) {
+    def buildNumber = project.hasProperty('BUILD_NUMBER') ? project.property('BUILD_NUMBER') : (System.getenv('BUILD_NUMBER') ?: System.getProperty('BUILD_NUMBER'))
 
     if (buildNumber == null) {
         return "$major.$minor.$patch"
+    } else if (buildNumber.toString().contains('.')) {
+        return buildNumber
     } else {
         return "$major.$minor.$patch-$buildNumber"
     }
