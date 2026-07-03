@@ -21,7 +21,7 @@
 
 package me.gabytm.minecraft.guihelper.functions
 
-import de.tr7zw.changeme.nbtapi.NBTItem
+import de.tr7zw.changeme.nbtapi.NBT
 import me.gabytm.minecraft.guihelper.util.Reflections
 import me.gabytm.minecraft.guihelper.util.ServerVersion
 import org.bukkit.*
@@ -169,7 +169,7 @@ val ItemStack.isUnbreakable: Boolean
         return if (ServerVersion.ITEM_META_HAS_UNBREAKABLE) {
             itemMeta?.isUnbreakable ?: false
         } else {
-            NBTItem(this).getBoolean("Unbreakable")
+            NBT.get<Boolean>(this) { it.getBoolean("Unbreakable") } ?: false
         }
     }
 
@@ -213,8 +213,10 @@ val ItemStack.skullTexture: String?
 			return Base64.getEncoder().encodeToString(json.encodeToByteArray())
 		}
 
-        val owner = NBTItem(this).getCompound("SkullOwner") ?: return null
-        return owner.getCompound("Properties")?.getCompoundList("textures")?.get(0)?.getString("Value") ?: return null
+        return NBT.get<String?>(this) { nbt ->
+            val owner = nbt.getCompound("SkullOwner") ?: return@get null
+            owner.getCompound("Properties")?.getCompoundList("textures")?.get(0)?.getString("Value")
+        }
     }
 
 /**

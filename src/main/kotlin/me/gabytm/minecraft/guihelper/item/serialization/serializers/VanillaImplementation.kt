@@ -19,14 +19,14 @@
 
 package me.gabytm.minecraft.guihelper.item.serialization.serializers
 
-import de.tr7zw.changeme.nbtapi.NBTItem
+import de.tr7zw.changeme.nbtapi.NBT
 import org.bukkit.inventory.ItemStack
 
 class VanillaImplementation : ItemSerializer() {
 
     override fun serialize(item: ItemStack): String {
         checkItem(item)
-        return NBTItem(item).toString()
+        return NBT.itemStackToNBT(item).toString()
     }
 
 }

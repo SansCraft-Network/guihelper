@@ -19,7 +19,7 @@
 
 package me.gabytm.minecraft.guihelper.generator.implementations
 
-import de.tr7zw.changeme.nbtapi.NBTItem
+import de.tr7zw.changeme.nbtapi.NBT
 import de.tr7zw.changeme.nbtapi.NBTType
 import me.gabytm.minecraft.guihelper.GUIHelper
 import me.gabytm.minecraft.guihelper.config.Config
@@ -143,25 +143,25 @@ class DeluxeMenusGenerator(
     }
 
 	private fun setNbt(section: ConfigurationSection, item: ItemStack) {
-		val nbt = NBTItem(item)
-
-		if (!nbt.hasNBTData()) {
-			return
-		}
-
-		val strings = mutableListOf<String>()
-		val ints = mutableListOf<String>()
-
-		for (key in nbt.keys.filter { !ignoredNbtKeys.contains(it) }) {
-			@Suppress("NON_EXHAUSTIVE_WHEN_STATEMENT")
-			when (nbt.getType(key)) {
-				NBTType.NBTTagString -> strings.add("$key:${nbt.getString(key)}")
-				NBTType.NBTTagInt -> ints.add("$key:${nbt.getInteger(key)}")
+		NBT.get(item) { nbt ->
+			if (!nbt.hasNBTData()) {
+				return@get
 			}
-		}
 
-		section.setList("nbt_strings", strings)
-		section.setList("nbt_ints", ints)
+			val strings = mutableListOf<String>()
+			val ints = mutableListOf<String>()
+
+			for (key in nbt.keys.filter { !ignoredNbtKeys.contains(it) }) {
+				when (nbt.getType(key)) {
+					NBTType.NBTTagString -> strings.add("$key:${nbt.getString(key)}")
+					NBTType.NBTTagInt -> ints.add("$key:${nbt.getInteger(key)}")
+					else -> {}
+				}
+			}
+
+			section.setList("nbt_strings", strings)
+			section.setList("nbt_ints", ints)
+		}
 	}
 
     private fun setMetaSpecificValues(section: ConfigurationSection, input: CommandLine, item: ItemStack, meta: ItemMeta) {
