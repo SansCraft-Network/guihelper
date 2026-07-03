@@ -45,7 +45,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build with Gradle
-        run: ./gradlew shadowJar
+        run: ./gradlew shadowJar -PBUILD_NUMBER=${{ steps.calculate_version.outputs.version }}
 
       - name: Create Release
         uses: softprops/action-gh-release@v2

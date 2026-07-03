@@ -1,13 +1,12 @@
 import re
 import subprocess
-import sys
 
 def get_current_w():
     try:
         with open('build.gradle', 'r') as f:
             content = f.read()
-            # version projectVersion(2, 0, 0)
-            match = re.search(r'version projectVersion\((\d+),', content)
+            # version projectVersion(project, 2, 0, 0)
+            match = re.search(r'version projectVersion\(project,\s*(\d+),', content)
             if match:
                 return int(match.group(1))
     except Exception:
